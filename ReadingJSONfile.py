@@ -43,13 +43,25 @@ def get_joints(json_file_name, previous_list_input, previous_list_output):
 
                         dict_joints[joint] = help_table2
                         help_table.append(help_table2)
-
                 input_data.append(help_table)
+            dict_joints = position_coordinate_system(dict_joints)
+
     return input_data, output_data
 
 
-
-
+def position_coordinate_system(dict_joints):
+    for joint in dict_joints:
+        if joint!= 'SpineMid':
+            dict_joints[joint][0] = dict_joints[joint][0] - dict_joints['SpineMid'][0]
+            dict_joints[joint][1] = dict_joints[joint][1] - dict_joints['SpineMid'][1]
+            dict_joints[joint][2] = dict_joints[joint][2] - dict_joints['SpineMid'][2]
+    for joint in dict_joints:
+        if joint == 'SpineMid':
+            dict_joints['SpineMid'][0] = 0
+            dict_joints['SpineMid'][1] = 0
+            dict_joints['SpineMid'][2] = 0
+    print (dict_joints)
+    return dict_joints
 
 input_data=[]
 output_data=[]
