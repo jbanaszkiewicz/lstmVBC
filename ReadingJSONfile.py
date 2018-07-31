@@ -23,8 +23,10 @@ def get_joints(json_file_name, previous_list_input, previous_list_output):
     # initiliasing lists of inputs and outputs
     input_data = previous_list_input
     output_data = previous_list_output
+
     for t in data3:
         for dictionaries in t:
+            dict_joints = {} #slownik odpowiedzialny za przechowywanie wspolrzednych joint'ow w danej klatce do zmiany ukladu wspolrzednych
             if dictionaries == "Tag":
                 output_data.append(t[dictionaries])
             body = t["Body"]
@@ -38,10 +40,16 @@ def get_joints(json_file_name, previous_list_input, previous_list_output):
                         help_table2.append(czesc["X"])
                         help_table2.append(czesc["Y"])
                         help_table2.append(czesc["Z"])
+
+                        dict_joints[joint] = help_table2
                         help_table.append(help_table2)
 
                 input_data.append(help_table)
     return input_data, output_data
+
+
+
+
 
 input_data=[]
 output_data=[]
