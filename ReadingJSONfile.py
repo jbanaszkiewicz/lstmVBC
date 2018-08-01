@@ -4,9 +4,8 @@ from keras.models import Sequential, load_model
 from keras.layers import Dense, Activation, Embedding, Flatten, Dropout, TimeDistributed, Reshape, Lambda
 from keras.layers import LSTM
 from keras.optimizers import RMSprop, Adam, SGD
-
 import tensorflow as tf
-
+import pickle
 
 
 def read_from_file(json_file_name):
@@ -23,6 +22,11 @@ def get_joints(json_file_name, previous_list_input, previous_list_output):
     # initiliasing lists of inputs and outputs
     input_data = previous_list_input
     output_data = previous_list_output
+
+    # wczytanie listy jointow
+    with open("ListOfJoints.txt", "rb") as fp:
+        list_of_joints = pickle.load(fp)
+
     for t in data3:
         for dictionaries in t:
             if dictionaries == "Tag":
@@ -30,23 +34,27 @@ def get_joints(json_file_name, previous_list_input, previous_list_output):
             body = t["Body"]
             if dictionaries == "Body":
                 help_table = []
-                for joint in t["Body"]:
-                    help_table2=[]
-
-                    if joint == "SpineBase" or joint == "SpineMid" or joint == "Neck" or joint == "Neck" or joint == "Head" or joint == "ShoulderLeft" or joint == "ElbowLeft" or joint == "WristLeft" or joint == "HandLeft" or joint == "ShoulderRight" or joint == "ElbowRight" or joint == "WristRight" or joint == "HandRight" or joint == "HipLeft" or joint == "KneeLeft" or joint == "AnkleLeft" or joint == "FootLeft" or joint == "HipRight" or joint == "KneeRight" or joint == "AnkleRight" or joint == "FootRight" or joint == "SpineShoulder" or joint == "HandTipLeft" or joint == "ThumbLeft" or joint == "HandTipRight" or joint == "ThumbRight":
-                        czesc = body[joint]
-                        help_table2.append(czesc["X"])
-                        help_table2.append(czesc["Y"])
-                        help_table2.append(czesc["Z"])
-                        help_table.append(help_table2)
+                for particular_joint_name in range(len(list_of_joints)):
+                    help_table2 = []
+                    particular_joint = body[list_of_joints[particular_joint_name]]
+                    help_table2.append(particular_joint["X"])
+                    help_table2.append(particular_joint["Y"])
+                    help_table2.append(particular_joint["Z"])
+                    help_table.append(help_table2)
 
                 input_data.append(help_table)
+    print()
+
     return input_data, output_data
 
-input_data=[]
-output_data=[]
+
+input_data = []
+output_data = []
 input_data, output_data=get_joints("testexp.json", input_data, output_data)
-input_data, output_data=get_joints("testexp2.json", input_data, output_data)
+
+# input_data, output_data=get_joints("testexp2.json", input_data, output_data)
+
+
 print(np.shape(input_data), np.shape(output_data))
 
 reshaped_input_data = np.reshape(input_data, (len(input_data), len(input_data[1][2]), len(input_data[1])))
